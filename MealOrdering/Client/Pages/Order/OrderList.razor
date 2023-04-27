@@ -1,0 +1,169 @@
+﻿@page "/orders/list"
+
+@using Telerik.Blazor.Components
+
+@inherits MealOrdering.Client.Pages.PageProcess.OrderBusiness
+
+
+
+
+
+@*<div class="card">
+    <div class="card-header d-flex align-items-center h-75">
+        Filter Section
+    </div>
+
+    <div class="card-body">
+        <EditForm Model="@filterModel">
+
+            <div class="form-row">
+                <div class="form-group col">
+                    <label>Create User</label>
+                    <UserListDropDown @bind-Value="filterModel.CreatedUserId" @bind-Value:event="ValueChanged" />
+                </div>
+
+                <div class="form-group col">
+                    <label>Create Date</label>
+                    <div class="d-flex">
+                        <InputDate class="form-control" @bind-Value="filterModel.CreateDateFirst" />
+                        <InputDate class="form-control" @bind-Value="filterModel.CreateDateLast" />
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="btn-group">
+                    <RefreshButtonComponent Caption="List" OnClick="ReLoadList" />
+                    <AddNewButtonComponent Caption="Create Order" OnClick="GoCreateOrder" />
+                </div>
+            </div>
+
+        </EditForm>
+    </div>
+</div>
+
+
+
+<br />
+<br />*@
+
+<TelerikForm Model="@filterModel">
+    <FormValidation>
+        <DataAnnotationsValidator></DataAnnotationsValidator>
+    </FormValidation>
+    <FormItems>
+        <div class="form-row">
+            <div class="form-group col">
+                <label>Create User</label>
+                <TelerikUserListDropDown @bind-Value="@filterModel.CreatedUserId" @bind-Value:event="ValueChanged">
+                </TelerikUserListDropDown>
+            </div>
+
+            <div class="form-group col">
+                <label>Create Date</label>
+                <div class="d-flex">
+                    <TelerikDatePicker @bind-Value="@filterModel.CreateDateFirst"
+                                       Format="dd MMMM yyyy"
+                                       Min="@MinDate" Max="@MaxDate">
+                    </TelerikDatePicker>
+                    <TelerikDatePicker @bind-Value="@filterModel.CreateDateLast"
+                                       Format="dd MMMM yyyy"
+                                       Min="@MinDate" Max="@MaxDate">
+                    </TelerikDatePicker>
+                </div>
+            </div>
+        </div>
+
+      
+    
+    </FormItems>
+    <FormButtons>
+        <div class="form-row">
+            <div class="btn-group">
+                <TelerikButton ThemeColor="success"
+                               OnClick="@ReLoadList" > List </TelerikButton>
+               @* <RefreshButtonComponent Caption="List" OnClick="ReLoadList" />*@
+               @* <AddNewButtonComponent Caption="Create Order" OnClick="GoCreateOrder" />*@
+                <TelerikButton ThemeColor="primary"
+                               OnClick="@GoCreateOrder"> Create Order </TelerikButton>
+            </div>
+        </div>
+    </FormButtons>
+</TelerikForm>
+
+
+@code {
+    private DateTime DateValue { get; set; } = DateTime.Now;
+
+    private DateTime MinDate { get; set; } = DateTime.Now.AddYears(-50);
+
+    private DateTime MaxDate { get; set; } = DateTime.Now.AddYears(50);
+
+    private List<object> AutoSwitchKeys { get; set; } = new List<object>() { ".", "/", " " };
+}
+
+
+<br />
+<br />
+
+
+<TelerikGrid Data="OrderList" Sortable="true" Pageable="true" FilterMode="GridFilterMode.FilterMenu">
+    <GridColumns>
+        <GridColumn Field="@nameof(OrderDTO.Id)"
+                    Title="Id"></GridColumn>
+        <GridColumn Field="@nameof(OrderDTO.CreatedUserFullName)"
+                    Title="Created By"></GridColumn>
+        <GridColumn Field="@nameof(OrderDTO.SupplierName)"
+                    Title="Supplier"></GridColumn>
+        <GridColumn Field="@nameof(OrderDTO.CreateDate)"
+                    Title="Created Date"></GridColumn>
+    </GridColumns>
+</TelerikGrid>
+
+@if (OrderList == null) OrderList = new List<MealOrdering.Shared.DTO.OrderDTO>();
+
+@*<table class="table table-hover table-sm">
+    <thead>
+        <tr>
+            <th scope="col">Id</th>
+   <th scope="col">Name</th>
+            <th scope="col">Created By</th>
+            <th scope="col">Supplier</th>
+            <th scope="col">Created Date</th>
+            <th scope="col">Expire Date</th>
+            <th scope="col">Remaining</th>
+            <th scope="col" style="width: auto">#</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @if (OrderList == null) OrderList = new List<MealOrdering.Shared.DTO.OrderDTO>();
+
+        @foreach (var order in OrderList)
+        {
+            <tr class="@(IsExpired(order.ExpireDate) ? "bg-warning":"")">
+                <td>@order.Id</td>
+   <td>@order.Name</td>
+                <td>@order.CreatedUserFullName</td>
+                <td>@order.SupplierName</td>
+                <td>@order.CreateDate.ToCustomDateTimeString()</td>
+                <td>@order.ExpireDate.ToCustomDateTimeString()</td>
+                <td>@(IsExpired(order.ExpireDate) ? "Expired" : order.ExpireDate.GetRemaningDateStr())</td>
+
+                <td>
+                    <div class="btn-toolbar">
+
+                        @if (IsMyOrder(order.CreatedUserId))
+                        {
+                            <CustomEditButtonComponent IsSmall="true" IsOutline="true" Caption="" OnClick="(() => GoEditOrder(order.Id))" />
+                            <DeleteButtonComponent IsSmall="true" IsOutline="true" Caption="" OnClick="(() => DeleteOrder(order.Id))" />
+                        }
+                    </div>
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>*@
+

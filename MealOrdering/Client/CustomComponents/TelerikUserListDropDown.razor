@@ -1,0 +1,114 @@
+﻿@inject HttpClient Http
+@using Telerik.Blazor.Components
+
+
+
+
+@*<TelerikDropDownList Data="@UserList" TextField="" ValueField="MyValueField" @bind-Value="Value">
+</TelerikDropDownList>
+
+@code
+{
+    private List<UserDTO> UserList { get; set; } = new List<UserDTO>();
+
+    [Parameter]
+    public Guid Value { get; set; }
+
+    [Parameter]
+    public EventCallback<Guid> ValueChanged { get; set; }
+
+
+    protected async override Task OnInitializedAsync()
+    {
+        var httpRes = await Http.GetFromJsonAsync<ServiceResponse<List<UserDTO>>>("api/User/Users");
+
+        UserList = httpRes.Value;
+    }
+
+    private Task OnValueChanged(ChangeEventArgs e)
+    {
+        if (Guid.TryParse(e.Value.ToString(), out Guid x))
+            Value = x;
+        else
+            Value = Guid.Empty;
+
+        return ValueChanged.InvokeAsync(Value);
+    }
+}*@
+
+@*<select class="custom-select" bind="@Value" @onchange="OnValueChanged">
+    <option value="Select" selected>(Select User)</option>
+
+    @foreach (var user in UserList)
+    {
+        if (user.Id == Value)
+        {
+            <option selected value="@user.Id">@user.FullName</option>
+        }
+        else
+        {
+            <option value="@user.Id">@user.FullName</option>
+        }
+    }
+
+</select>*@
+
+
+
+<br />
+<TelerikDropDownList Data="@UserList"
+                     @bind-Value="@Value"
+                     TextField="@nameof(UserDTO.FullName)"
+                     ValueField="@nameof(UserDTO.Id)"
+                     DefaultText="Select User"
+                     OnChange="@MyOnChangeHandler">
+                    
+</TelerikDropDownList>
+
+
+
+@code {
+
+    private List<UserDTO> UserList { get; set; } = new List<UserDTO>();
+
+    // private List<Guid> DropDownValue { get; set; } = new List<Guid>;
+
+    [Parameter]
+    public Guid Value { get; set; }
+
+    [Parameter]
+    public EventCallback<Guid> ValueChanged { get; set; }
+
+
+
+    protected async override Task OnInitializedAsync()
+    {
+        var httpRes = await Http.GetFromJsonAsync<ServiceResponse<List<UserDTO>>>("api/User/Users");
+
+        UserList = httpRes.Value;
+
+        //DropDownValue = UserList.Select(x => x.Id).ToList();
+    }
+
+    private Task OnValueChanged(Object e)
+    {
+        if (Guid.TryParse(e.ToString(), out Guid x))
+            Value = x;
+        else
+            Value = Guid.Empty;
+
+        return ValueChanged.InvokeAsync(Value);
+    }
+    void MyOnChangeHandler(object theUserInput)
+    {
+        Console.WriteLine("We are here");
+        // the handler receives an object that you may need to cast to the type of the component
+        // if you do not provide a Value, you must provide the Type parameter to the component
+        //result = string.Format("The user selected: {0}", (theUserInput as string));
+    }
+}
+
+
+<br />
+
+<br />
